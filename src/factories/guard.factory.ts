@@ -75,7 +75,7 @@ export abstract class GuardFactory {
     abstract countAdmins(): Promise<number>;
 }
 
-type GuardJson = {
+export type GuardJson = {
     id?: string;
     email?: string;
     isAdmin?: boolean;
