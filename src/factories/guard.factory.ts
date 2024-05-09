@@ -67,6 +67,7 @@ export abstract class Guard {
 
 export abstract class GuardFactory {
     abstract create(data: GuardData): Promise<Guard>;
+    abstract findByEmail(email: string): Promise<Guard>;
     abstract findById(id: string): Promise<Guard>;
     abstract findAll(options?: PaginationOptions): Promise<PaginatedContent<Guard>>;
     abstract existById(id: string): Promise<boolean>;

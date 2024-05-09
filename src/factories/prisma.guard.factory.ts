@@ -106,6 +106,12 @@ export class PrismaGuardFactory extends GuardFactory {
         return new PrismaGuard(guardData, this.prismaClient);
     }
 
+    async findByEmail(email: string): Promise<Guard> {
+        const data = await this.prismaClient.guard.findUnique({ where: { email } });
+        if (!data) throw new NotFoundError(`user with email ${email} does not exist`);
+        return new PrismaGuard(data, this.prismaClient);
+    }
+
     async findById(id: string): Promise<Guard> {
         const guardData = await this.prismaClient.guard.findUnique({
             where: { id },
