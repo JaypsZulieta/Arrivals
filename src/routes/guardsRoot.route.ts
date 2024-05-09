@@ -6,21 +6,25 @@ import { PersonDataBuilder, PersonFactory, PersonJSONBuilder } from "../factorie
 import { container, inject, injectable } from "tsyringe";
 import { PasswordEncoder } from "jaypee-password-encoder";
 import { ConflictError } from "../errors.ts";
+import { JwtService } from "jaypee-jwt-service";
 
 @injectable()
 class GuardRoot implements POSTRoute {
     private guardFactory: GuardFactory;
     private personFactory: PersonFactory;
     private passwordEncoder: PasswordEncoder;
+    private jwtService: JwtService;
 
     constructor(
         @inject("guardFactory") guardFactory: GuardFactory,
         @inject("personFactory") personFacotry: PersonFactory,
-        @inject("passwordEncoder") passwordEncoder: PasswordEncoder
+        @inject("passwordEncoder") passwordEncoder: PasswordEncoder,
+        @inject("jwtService") jwtService: JwtService
     ) {
         this.guardFactory = guardFactory;
         this.personFactory = personFacotry;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     getURI(): string {
@@ -84,7 +88,22 @@ class GuardRoot implements POSTRoute {
             .person(personJson)
             .build();
 
-        return new BedResponseBuilder().statusCode(201).body(guardJson).build();
+        const jwtSecretKey = process.env.JWT_SECRET_KEY as string;
+        const refreshTokenSecretKey = process.env.REFRESH_TOKEN_SECRET_KEY as string;
+
+        const accessToken = await this.jwtService.generateToken(guard.getEmail(), jwtSecretKey, {
+            expiresIn: "10mins",
+        });
+        const refreshToken = await this.jwtService.generateToken(
+            guard.getEmail(),
+            refreshTokenSecretKey,
+            { expiresIn: "8hrs" }
+        );
+
+        return new BedResponseBuilder()
+            .statusCode(201)
+            .body({ ...guardJson, accessToken, refreshToken })
+            .build();
     }
 
     private async hash(plainTextPassword: string): Promise<string> {
