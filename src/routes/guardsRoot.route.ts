@@ -1,16 +1,10 @@
 import "reflect-metadata";
 import "../../app.config";
-import { GuardFactory } from "../factories/guard.factory";
-import { PersonFactory } from "../factories/person.factory";
+import { BadRequestError, BedRequest, BedResponse, BedResponseBuilder, POSTRoute } from "hammockjs";
+import { GuardDataBuilder, GuardFactory, GuardJSONBuilder } from "../factories/guard.factory";
+import { PersonDataBuilder, PersonFactory, PersonJSONBuilder } from "../factories/person.factory";
 import { container, inject, injectable } from "tsyringe";
 import { PasswordEncoder } from "jaypee-password-encoder";
-import {
-    BadRequestError,
-    BedRequest,
-    BedResponse,
-    BedResponseBuilder,
-    POSTRoute,
-} from "hammockjs";
 import { ConflictError } from "../errors.ts";
 
 @injectable()
@@ -49,45 +43,52 @@ class GuardRoot implements POSTRoute {
         if ((await this.guardFactory.countAdmins()) > 0)
             throw new ConflictError("there is already an admin in the system");
 
-        const person = await this.personFactory.create({
-            firstname,
-            middlename,
-            lastname,
-            sex,
-        });
-        const guard = await this.guardFactory
-            .create({
-                email,
-                password,
-                personId: person.getId(),
-            })
-            .catch(async (error) => {
-                await person.delete();
-                throw error;
-            });
+        const personData = new PersonDataBuilder()
+            .firstname(firstname)
+            .middlename(middlename)
+            .lastname(lastname)
+            .sex(sex)
+            .build();
+        const person = await this.personFactory.create(personData);
 
-        const hashPassword = await this.passwordEncoder.encode(
-            guard.getPassword()
-        );
+        const guardData = new GuardDataBuilder()
+            .email(email)
+            .password(password)
+            .personId(person.getId())
+            .build();
+        const guard = await this.guardFactory.create(guardData).catch(async (error) => {
+            await person.delete();
+            throw error;
+        });
+
+        const plainTextPassword = guard.getPassword();
+        const hashPassword = await this.hash(plainTextPassword);
+
         await guard.updateAdminStatus(true);
         await guard.updatePassword(hashPassword);
 
-        return new BedResponseBuilder()
-            .statusCode(201)
-            .body({
-                id: guard.getId(),
-                email: guard.getEmail(),
-                isAdmin: guard.isAdmin(),
-                isDisabled: guard.isDisbaled(),
-                personalInfo: {
-                    firstname: person.getFirstname(),
-                    middlename: person.getMiddlename(),
-                    lastname: person.getLastname(),
-                    sex: person.getSex(),
-                    profileImageURL: person.getProfileImageURL(),
-                },
-            })
+        const personJson = new PersonJSONBuilder()
+            .firstname(person.getFirstname())
+            .middlename(person.getMiddlename())
+            .lastname(person.getLastname())
+            .sex(person.getSex())
+            .profileImageURL(person.getProfileImageURL())
+            .timeAdded(person.getTimeAdded())
             .build();
+
+        const guardJson = new GuardJSONBuilder()
+            .id(guard.getId())
+            .email(guard.getEmail())
+            .isAdmin(guard.isAdmin())
+            .isDisabled(guard.isDisbaled())
+            .person(personJson)
+            .build();
+
+        return new BedResponseBuilder().statusCode(201).body(guardJson).build();
+    }
+
+    private async hash(plainTextPassword: string): Promise<string> {
+        return await this.passwordEncoder.encode(plainTextPassword);
     }
 }
 
