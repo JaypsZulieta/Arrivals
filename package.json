@@ -20,6 +20,7 @@
   "dependencies": {
     "@prisma/client": "5.13.0",
     "hammockjs": "^0.3.0",
+    "jaypee-jwt-service": "^1.0.0",
     "jaypee-password-encoder": "^1.0.0",
     "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.8.0"
