@@ -74,3 +74,46 @@ export abstract class GuardFactory {
     abstract count(): Promise<number>;
     abstract countAdmins(): Promise<number>;
 }
+
+type GuardJson = {
+    id?: string;
+    email?: string;
+    isAdmin?: boolean;
+    isDisabled?: boolean;
+};
+
+export class GuardJSONBuilder {
+    private idAttribute?: string;
+    private emailAttribute?: string;
+    private isAdminAttribute?: boolean;
+    private isDisabledAttribute?: boolean;
+
+    id(id?: string): GuardJSONBuilder {
+        this.idAttribute = id;
+        return this;
+    }
+
+    email(email?: string): GuardJSONBuilder {
+        this.emailAttribute = email;
+        return this;
+    }
+
+    isAdmin(status: boolean): GuardJSONBuilder {
+        this.isAdminAttribute = status;
+        return this;
+    }
+
+    isDisabled(status: boolean): GuardJSONBuilder {
+        this.isDisabledAttribute = status;
+        return this;
+    }
+
+    build(): GuardJson {
+        return {
+            id: this.idAttribute,
+            email: this.emailAttribute,
+            isAdmin: this.isAdminAttribute,
+            isDisabled: this.isDisabledAttribute,
+        };
+    }
+}
