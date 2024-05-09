@@ -18,7 +18,7 @@ export class PersonDataBuilder {
         return this;
     }
 
-    middlename(middlename: string): PersonDataBuilder {
+    middlename(middlename?: string): PersonDataBuilder {
         this.middlenameAttribute = middlename;
         return this;
     }
