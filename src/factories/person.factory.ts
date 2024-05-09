@@ -68,3 +68,62 @@ export abstract class PersonFactory {
     abstract existById(id: number): Promise<boolean>;
     abstract count(): Promise<number>;
 }
+
+type PersonJson = {
+    firstname?: string;
+    middlename?: string | null;
+    lastname?: string;
+    sex?: "MALE" | "FEMALE";
+    profileImageURL?: string;
+    timeAdded?: Date;
+};
+
+export class PersonJSONBuilder {
+    private firstnameAttribute?: string;
+    private middlenameAttribute?: string | null;
+    private lastnameAttribute?: string;
+    private sexAttribute?: "MALE" | "FEMALE";
+    private profileImageURLAttribute?: string;
+    private timeAddedAttribute?: Date;
+
+    firstname(firstname?: string): PersonJSONBuilder {
+        this.firstnameAttribute = firstname;
+        return this;
+    }
+
+    middlename(middlename?: string | null): PersonJSONBuilder {
+        this.middlenameAttribute = middlename;
+        return this;
+    }
+
+    lastname(lastname?: string): PersonJSONBuilder {
+        this.lastnameAttribute = lastname;
+        return this;
+    }
+
+    sex(sex?: "MALE" | "FEMALE"): PersonJSONBuilder {
+        this.sexAttribute = sex;
+        return this;
+    }
+
+    profileImageURL(profileImageURL?: string): PersonJSONBuilder {
+        this.profileImageURLAttribute = profileImageURL;
+        return this;
+    }
+
+    timeAdded(timeAdded?: Date): PersonJSONBuilder {
+        this.timeAddedAttribute = timeAdded;
+        return this;
+    }
+
+    build(): PersonJson {
+        return {
+            firstname: this.firstnameAttribute,
+            middlename: this.middlenameAttribute,
+            lastname: this.lastnameAttribute,
+            sex: this.sexAttribute,
+            profileImageURL: this.profileImageURLAttribute,
+            timeAdded: this.timeAddedAttribute,
+        };
+    }
+}
