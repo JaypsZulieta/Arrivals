@@ -69,7 +69,7 @@ export abstract class PersonFactory {
     abstract count(): Promise<number>;
 }
 
-type PersonJson = {
+export type PersonJson = {
     firstname?: string;
     middlename?: string | null;
     lastname?: string;
