@@ -1,0 +1,27 @@
+{
+  "name": "arrivals",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "test:unit": "jest ./test/unit/",
+    "test:integration": "jest ./test/integration/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "prisma": "5.13.0",
+    "ts-jest": "^29.1.2"
+  },
+  "dependencies": {
+    "@prisma/client": "5.13.0",
+    "hammockjs": "^0.3.0",
+    "jaypee-password-encoder": "^1.0.0",
+    "reflect-metadata": "^0.2.2",
+    "tsyringe": "^4.8.0"
+  }
+}
