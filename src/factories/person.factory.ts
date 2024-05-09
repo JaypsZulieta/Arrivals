@@ -33,7 +33,7 @@ export class PersonDataBuilder {
         return this;
     }
 
-    buld(): PersonData {
+    build(): PersonData {
         return {
             firstname: this.firstnameAttribute,
             middlename: this.middlenameAttribute,
