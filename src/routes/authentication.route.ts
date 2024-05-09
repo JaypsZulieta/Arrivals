@@ -44,10 +44,13 @@ class AuthenticationRoute implements POSTRoute, PUTRoute {
 
         const person = await this.personFactory.findById(guard.getPersonId());
 
-        const accessToken = await this.jwtService.generateToken(guard.getEmail(), jwtSecretKey);
+        const accessToken = await this.jwtService.generateToken(guard.getEmail(), jwtSecretKey, {
+            expiresIn: "10mins",
+        });
         const refreshToken = await this.jwtService.generateToken(
             guard.getEmail(),
-            refreshTokenSecretKey
+            refreshTokenSecretKey,
+            { expiresIn: "8hrs" }
         );
 
         const personJson = new PersonJSONBuilder()
