@@ -27,19 +27,24 @@ class GuardRoute implements GETRoute, PATCHRoute {
         if (!bearerToken) throw new ForbiddenError("forbidden");
 
         const jwtSecretKey = process.env.JWT_SECRET_KEY as string;
-        const subject = await this.jwtService.validate(bearerToken, jwtSecretKey).catch(() => {
+        const subject = await this.jwtService.validate(bearerToken, jwtSecretKey).catch((err) => {
             throw new ForbiddenError("forbidden");
         });
 
-        const guard = await this.guardFactory.findByEmail(subject).catch((err) => {
+        const resourceId = request.getPathParameter("id");
+
+        const user = await this.guardFactory.findByEmail(subject).catch(() => {
+            throw new ForbiddenError("forbidden");
+        });
+
+        const guard = await this.guardFactory.findById(resourceId).catch(() => {
             throw new ForbiddenError("forbidden");
         });
 
         const person = await this.personFactory.findById(guard.getPersonId());
-        const resourceId = request.getPathParameter("id");
 
-        const isNotOwner = guard.getId() != resourceId;
-        if (isNotOwner) throw new ForbiddenError("You do not own this resource");
+        const isNotOwner = user.getId() != resourceId;
+        if (isNotOwner && !user.isAdmin()) throw new ForbiddenError("You do not own this resource");
 
         return new BedResponseBuilder()
             .statusCode(200)
@@ -71,17 +76,22 @@ class GuardRoute implements GETRoute, PATCHRoute {
         if (sex && sex != "MALE" && sex != "FEMALE")
             throw new BadRequestError("sex must be either MALE or FEMALE");
 
-        const guard = await this.guardFactory.findByEmail(subject).catch(() => {
+        const resourceId = request.getPathParameter("id");
+
+        const user = await this.guardFactory.findByEmail(subject).catch(() => {
+            throw new ForbiddenError("forbidden");
+        });
+
+        const guard = await this.guardFactory.findById(resourceId).catch(() => {
             throw new ForbiddenError("forbidden");
         });
 
         const person = await this.personFactory.findById(guard.getPersonId());
-        const resourceId = request.getPathParameter("id");
 
-        const isNotOwner = guard.getId() != resourceId;
-        if (isNotOwner) throw new ForbiddenError("forbidden");
+        const isNotOwner = user.getId() != resourceId;
+        if (isNotOwner && !user.isAdmin()) throw new ForbiddenError("forbidden");
 
-        const admin = guard.isAdmin();
+        const admin = user.isAdmin();
 
         if (email) await guard.updateEmail(email);
         if (password) {

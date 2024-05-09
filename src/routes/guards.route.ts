@@ -21,13 +21,15 @@ import {
     PersonJSONBuilder,
 } from "../factories/person.factory";
 import { JwtService } from "jaypee-jwt-service";
+import { PasswordEncoder } from "jaypee-password-encoder";
 
 @injectable()
 class GuardsRoute implements POSTRoute {
     constructor(
         @inject("guardFactory") private guardFactory: GuardFactory,
         @inject("personFactory") private personFactory: PersonFactory,
-        @inject("jwtService") private jwtService: JwtService
+        @inject("jwtService") private jwtService: JwtService,
+        @inject("passwordEncoder") private passwordEncoder: PasswordEncoder
     ) {}
 
     async POST(request: BedRequest): Promise<BedResponse> {
@@ -59,6 +61,8 @@ class GuardsRoute implements POSTRoute {
         if (sex != "MALE" && sex != "FEMALE")
             throw new BadRequestError("sex must be either MALE or FEMALE");
 
+        const hashPassword = await this.passwordEncoder.encode(password);
+
         const personData = new PersonDataBuilder()
             .firstname(firstname)
             .middlename(middlename)
@@ -69,7 +73,7 @@ class GuardsRoute implements POSTRoute {
 
         const guardData = new GuardDataBuilder()
             .email(email)
-            .password(password)
+            .password(hashPassword)
             .personId(person.getId())
             .isAdmin(isAdmin)
             .build();
