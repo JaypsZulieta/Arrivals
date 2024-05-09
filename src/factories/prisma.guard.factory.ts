@@ -35,8 +35,7 @@ export class PrismaGuard extends Guard {
     }
 
     async updateEmail(email: string): Promise<void> {
-        if (await this.emailTaken())
-            throw new ConflictError(`${email} is already taken`);
+        if (await this.emailTaken()) throw new ConflictError(`${email} is already taken`);
         const data = await this.prismaClient.guard.update({
             data: { email },
             where: { id: this.getId() },
@@ -115,9 +114,7 @@ export class PrismaGuardFactory extends GuardFactory {
         return new PrismaGuard(guardData, this.prismaClient);
     }
 
-    async findAll(
-        options?: PaginationOptions | undefined
-    ): Promise<PaginatedContent<Guard>> {
+    async findAll(options?: PaginationOptions | undefined): Promise<PaginatedContent<Guard>> {
         const pageSize = options?.pageSize || 10;
         const currentPage = options?.pageNumber || 1;
         const totalItems = await this.count();
@@ -128,9 +125,7 @@ export class PrismaGuardFactory extends GuardFactory {
                 skip,
                 take: pageSize,
             })
-            .then((data) =>
-                data.map((guard) => new PrismaGuard(guard, this.prismaClient))
-            );
+            .then((data) => data.map((guard) => new PrismaGuard(guard, this.prismaClient)));
         return {
             totalItems,
             totalPages,

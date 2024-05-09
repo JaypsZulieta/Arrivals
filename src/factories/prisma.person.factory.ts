@@ -119,14 +119,11 @@ export class PrismaPersonFactory extends PersonFactory {
         const data = await this.prismaClient.person.findUnique({
             where: { id },
         });
-        if (!data)
-            throw new NotFoundError(`person with id ${id} does not exist`);
+        if (!data) throw new NotFoundError(`person with id ${id} does not exist`);
         return new PrismaPerson(data, this.prismaClient);
     }
 
-    async findAll(
-        options?: PaginationOptions | undefined
-    ): Promise<PaginatedContent<Person>> {
+    async findAll(options?: PaginationOptions | undefined): Promise<PaginatedContent<Person>> {
         const pageSize = options?.pageSize || 10;
         const currentPage = options?.pageNumber || 1;
         const totalItems = await this.prismaClient.person.count();
@@ -136,9 +133,7 @@ export class PrismaPersonFactory extends PersonFactory {
             take: pageSize,
             skip,
         });
-        const content = data.map(
-            (data) => new PrismaPerson(data, this.prismaClient)
-        );
+        const content = data.map((data) => new PrismaPerson(data, this.prismaClient));
         return {
             totalItems,
             totalPages,

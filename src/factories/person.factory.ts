@@ -62,9 +62,7 @@ export abstract class Person {
 export abstract class PersonFactory {
     abstract create(data: PersonData): Promise<Person>;
     abstract findById(id: number): Promise<Person>;
-    abstract findAll(
-        options?: PaginationOptions
-    ): Promise<PaginatedContent<Person>>;
+    abstract findAll(options?: PaginationOptions): Promise<PaginatedContent<Person>>;
     abstract existById(id: number): Promise<boolean>;
     abstract count(): Promise<number>;
 }

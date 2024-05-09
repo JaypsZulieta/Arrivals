@@ -68,9 +68,7 @@ export abstract class Guard {
 export abstract class GuardFactory {
     abstract create(data: GuardData): Promise<Guard>;
     abstract findById(id: string): Promise<Guard>;
-    abstract findAll(
-        options?: PaginationOptions
-    ): Promise<PaginatedContent<Guard>>;
+    abstract findAll(options?: PaginationOptions): Promise<PaginatedContent<Guard>>;
     abstract existById(id: string): Promise<boolean>;
     abstract count(): Promise<number>;
     abstract countAdmins(): Promise<number>;
