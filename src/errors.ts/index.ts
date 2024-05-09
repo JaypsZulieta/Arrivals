@@ -7,10 +7,7 @@ export class NotFoundError extends HttpError {
 
     async sendResponse(): Promise<BedResponse> {
         const message = this.message;
-        return new BedResponseBuilder()
-            .statusCode(404)
-            .body({ message })
-            .build();
+        return new BedResponseBuilder().statusCode(404).body({ message }).build();
     }
 }
 
@@ -21,9 +18,17 @@ export class ConflictError extends HttpError {
 
     async sendResponse(): Promise<BedResponse> {
         const message = this.message;
-        return new BedResponseBuilder()
-            .statusCode(409)
-            .body({ message })
-            .build();
+        return new BedResponseBuilder().statusCode(409).body({ message }).build();
+    }
+}
+
+export class UnauthorizedError extends HttpError {
+    constructor(message: string) {
+        super(message);
+    }
+
+    async sendResponse(): Promise<BedResponse> {
+        const message = this.message;
+        return new BedResponseBuilder().statusCode(401).body({ message }).build();
     }
 }
