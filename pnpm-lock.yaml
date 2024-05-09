@@ -12,8 +12,8 @@ importers:
         specifier: 5.13.0
         version: 5.13.0(prisma@5.13.0)
       hammockjs:
-        specifier: ^0.3.0
-        version: 0.3.0
+        specifier: ^0.3.1
+        version: 0.3.1
       jaypee-jwt-service:
         specifier: ^1.0.0
         version: 1.0.0
@@ -729,8 +729,8 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
-  hammockjs@0.3.0:
-    resolution: {integrity: sha512-rBO0rHEmdXxsCQapewqp54SrQqAikUpdCJ7iGK0imWp2jzDJHKLw2Gr1KMts4TIxXIThQSLg4atYc8q9nMo7Qw==}
+  hammockjs@0.3.1:
+    resolution: {integrity: sha512-HSzu/yI7/i8klScK5sTcE/BBoFUfy1id39Ur4XjXJo5DizrTFYIjVAFI35kE6HZsP2cm5uEj8Avf84908x78uQ==}
 
   has-flag@3.0.0:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
@@ -2308,7 +2308,7 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
-  hammockjs@0.3.0:
+  hammockjs@0.3.1:
     dependencies:
       '@hono/node-server': 1.11.1
       '@types/chalk': 2.2.0

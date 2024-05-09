@@ -1,4 +1,11 @@
-import { BedRequest, BedResponse, BedResponseBuilder, POSTRoute } from "hammockjs";
+import {
+    BedRequest,
+    BedResponse,
+    BedResponseBuilder,
+    ForbiddenError,
+    POSTRoute,
+    PUTRoute,
+} from "hammockjs";
 import { PasswordEncoder } from "jaypee-password-encoder";
 import { container, injectable, inject } from "tsyringe";
 import { GuardFactory, GuardJSONBuilder } from "../factories/guard.factory";
@@ -7,7 +14,7 @@ import { UnauthorizedError } from "../errors.ts";
 import { PersonFactory, PersonJSONBuilder } from "../factories/person.factory";
 
 @injectable()
-class AuthenticationRoute implements POSTRoute {
+class AuthenticationRoute implements POSTRoute, PUTRoute {
     constructor(
         @inject("passwordEncoder") private passwordEncoder: PasswordEncoder,
         @inject("guardFactory") private guardFactory: GuardFactory,
@@ -64,6 +71,33 @@ class AuthenticationRoute implements POSTRoute {
             .statusCode(200)
             .body({ ...guardJson, accessToken, refreshToken })
             .build();
+    }
+
+    async PUT(request: BedRequest): Promise<BedResponse> {
+        const bearerToken = request.getHeader("Authorization")?.split("Bearer ")[1];
+        if (!bearerToken) throw new ForbiddenError("forbidden");
+
+        const jwtSecretKey = process.env.JWT_SECRET_KEY as string;
+        const refreshTokenSecretKey = process.env.REFRESH_TOKEN_SECRET_KEY as string;
+
+        const subject = await this.jwtService
+            .validate(bearerToken, refreshTokenSecretKey)
+            .catch(() => {
+                throw new ForbiddenError("forbidden");
+            });
+
+        await this.guardFactory.findByEmail(subject).catch(() => {
+            throw new ForbiddenError("forbidden");
+        });
+
+        const accessToken = await this.jwtService.generateToken(subject, jwtSecretKey, {
+            expiresIn: "10mins",
+        });
+        const refreshToken = await this.jwtService.generateToken(subject, refreshTokenSecretKey, {
+            expiresIn: "8hrs",
+        });
+
+        return new BedResponseBuilder().statusCode(200).body({ accessToken, refreshToken }).build();
     }
 
     getURI(): string {
