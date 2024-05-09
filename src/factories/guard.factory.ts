@@ -8,6 +8,49 @@ type GuardData = {
     personId: number;
 };
 
+export class GuardDataBuilder {
+    private emailAttribute!: string;
+    private passwordAttribute!: string;
+    private isAdminAttribute?: boolean;
+    private isDisabledAttribute?: boolean;
+    private personIdAttribute!: number;
+
+    email(email: string): GuardDataBuilder {
+        this.emailAttribute = email;
+        return this;
+    }
+
+    password(password: string): GuardDataBuilder {
+        this.passwordAttribute = password;
+        return this;
+    }
+
+    isAdmin(status: boolean): GuardDataBuilder {
+        this.isAdminAttribute = status;
+        return this;
+    }
+
+    isDisabled(status: boolean): GuardDataBuilder {
+        this.isDisabledAttribute = status;
+        return this;
+    }
+
+    personId(personId: number): GuardDataBuilder {
+        this.personIdAttribute = personId;
+        return this;
+    }
+
+    build(): GuardData {
+        return {
+            email: this.emailAttribute,
+            password: this.passwordAttribute,
+            isAdmin: this.isAdminAttribute,
+            isDisabled: this.isDisabledAttribute,
+            personId: this.personIdAttribute,
+        };
+    }
+}
+
 export abstract class Guard {
     abstract getId(): string;
     abstract getEmail(): string;
