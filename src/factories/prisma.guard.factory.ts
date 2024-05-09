@@ -30,7 +30,7 @@ export class PrismaGuard extends Guard {
             where: { email: this.getEmail() },
         });
         if (!existingUser) return false;
-        if (existingUser.id != this.getId()) return false;
+        if (existingUser.id == this.getId()) return false;
         return true;
     }
 

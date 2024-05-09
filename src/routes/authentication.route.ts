@@ -89,9 +89,11 @@ class AuthenticationRoute implements POSTRoute, PUTRoute {
                 throw new ForbiddenError("forbidden");
             });
 
-        await this.guardFactory.findByEmail(subject).catch(() => {
+        const guard = await this.guardFactory.findByEmail(subject).catch(() => {
             throw new ForbiddenError("forbidden");
         });
+
+        if (guard.isDisbaled()) throw new ForbiddenError("Your account is disabled");
 
         const accessToken = await this.jwtService.generateToken(subject, jwtSecretKey, {
             expiresIn: "10mins",

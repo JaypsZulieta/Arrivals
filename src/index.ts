@@ -9,6 +9,8 @@ const hammock = new Hammock(8080);
 
 hammock.addPOSTRoute(authenticationRoute);
 hammock.addPUTRoute(authenticationRoute);
+
+hammock.addPATCHRoute(guardRoute);
 hammock.addPOSTRoute(guardRoot);
 hammock.addGETRoute(guardRoute);
 
