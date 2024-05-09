@@ -1,4 +1,5 @@
 import { PaginatedContent, PaginationOptions } from "../pagination";
+import { PersonJson } from "./person.factory";
 
 type GuardData = {
     email: string;
@@ -80,6 +81,7 @@ export type GuardJson = {
     email?: string;
     isAdmin?: boolean;
     isDisabled?: boolean;
+    person?: PersonJson;
 };
 
 export class GuardJSONBuilder {
@@ -87,6 +89,7 @@ export class GuardJSONBuilder {
     private emailAttribute?: string;
     private isAdminAttribute?: boolean;
     private isDisabledAttribute?: boolean;
+    private personAttribute?: PersonJson;
 
     id(id?: string): GuardJSONBuilder {
         this.idAttribute = id;
@@ -108,12 +111,18 @@ export class GuardJSONBuilder {
         return this;
     }
 
+    person(person: PersonJson): GuardJSONBuilder {
+        this.personAttribute = person;
+        return this;
+    }
+
     build(): GuardJson {
         return {
             id: this.idAttribute,
             email: this.emailAttribute,
             isAdmin: this.isAdminAttribute,
             isDisabled: this.isDisabledAttribute,
+            person: this.personAttribute,
         };
     }
 }
