@@ -25,12 +25,12 @@ export class GuardDataBuilder {
         return this;
     }
 
-    isAdmin(status: boolean): GuardDataBuilder {
+    isAdmin(status?: boolean): GuardDataBuilder {
         this.isAdminAttribute = status;
         return this;
     }
 
-    isDisabled(status: boolean): GuardDataBuilder {
+    isDisabled(status?: boolean): GuardDataBuilder {
         this.isDisabledAttribute = status;
         return this;
     }
