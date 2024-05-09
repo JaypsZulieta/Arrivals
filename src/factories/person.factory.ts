@@ -7,6 +7,42 @@ type PersonData = {
     sex: "MALE" | "FEMALE";
 };
 
+export class PersonDataBuilder {
+    private firstnameAttribute: string = "";
+    private middlenameAttribute?: string = "";
+    private lastnameAttribute: string = "";
+    private sexAttribute: "MALE" | "FEMALE" = "MALE";
+
+    firstname(firstname: string): PersonDataBuilder {
+        this.firstnameAttribute = firstname;
+        return this;
+    }
+
+    middlename(middlename: string): PersonDataBuilder {
+        this.middlenameAttribute = middlename;
+        return this;
+    }
+
+    lastname(lastname: string): PersonDataBuilder {
+        this.lastnameAttribute = lastname;
+        return this;
+    }
+
+    sex(sex: "MALE" | "FEMALE"): PersonDataBuilder {
+        this.sexAttribute = sex;
+        return this;
+    }
+
+    buld(): PersonData {
+        return {
+            firstname: this.firstnameAttribute,
+            middlename: this.middlenameAttribute,
+            lastname: this.lastnameAttribute,
+            sex: this.sexAttribute,
+        };
+    }
+}
+
 export abstract class Person {
     abstract getId(): number;
     abstract getFirstname(): string;
