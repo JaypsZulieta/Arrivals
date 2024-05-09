@@ -80,7 +80,7 @@ export type GuardJson = {
     email?: string;
     isAdmin?: boolean;
     isDisabled?: boolean;
-    person?: PersonJson;
+    personalInfo?: PersonJson;
 };
 
 export class GuardJSONBuilder {
@@ -121,7 +121,7 @@ export class GuardJSONBuilder {
             email: this.emailAttribute,
             isAdmin: this.isAdminAttribute,
             isDisabled: this.isDisabledAttribute,
-            person: this.personAttribute,
+            personalInfo: this.personAttribute,
         };
     }
 }
