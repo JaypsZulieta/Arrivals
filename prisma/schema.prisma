@@ -37,4 +37,76 @@ model Guard {
   isDisabled Boolean @default(false)
   personId   Int     @unique
   Person     Person  @relation(fields: [personId], references: [id], onDelete: Cascade)
+  tracks Track[]
+  strands Strand[]
+  section Section[]
+  students Student[]
+  arrival Arrival[]
+  departures Departure[]
+}
+
+model Track {
+  id Int @id @default(autoincrement())
+  name String @unique
+  guardId String
+  timeAdded DateTime @default(now())
+  guard Guard @relation(fields: [guardId], references: [id], onDelete: Cascade)
+  strands Strand[]
+}
+
+model Strand {
+  id Int @id @default(autoincrement())
+  name String @unique
+  trackId Int
+  guardId String
+  timeAdded DateTime @default(now())
+  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  guard Guard @relation(fields: [guardId], references: [id], onDelete: Cascade)
+  sections Section[]
+}
+
+enum GradeLevel {
+  G11
+  G12
+}
+
+model Section {
+  id Int @id @default(autoincrement())
+  name String @unique
+  gradeLevel GradeLevel
+  strandId Int
+  guardId String
+  timeAdded DateTime @default(now())
+  strand Strand @relation(fields: [strandId], references: [id], onDelete: Cascade)
+  guard Guard @relation(fields: [guardId], references: [id], onDelete: Cascade)
+  students Student[]
+}
+
+model Student {
+  lrn String @id
+  guardianPhonenumber String
+  personId Int
+  sectionId Int
+  guardId String
+  section Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  guard Guard @relation(fields: [guardId], references: [id])
+  arrivals Arrival[]
+}
+
+model Arrival {
+  id Int @id
+  lrn String
+  guardId String
+  time DateTime @default(now())
+  student Student @relation(fields: [lrn], references: [lrn], onDelete: Cascade)
+  guard Guard @relation(fields: [guardId], references: [id], onDelete: Cascade)
+  departures Departure[]
+}
+
+model Departure {
+  id Int @id
+  arrivalId  Int @unique
+  guardId String
+  guard Guard @relation(fields: [guardId], references: [id], onDelete: Cascade)
+  arrival Arrival @relation(fields: [arrivalId], references: [id], onDelete: Cascade)
 }
